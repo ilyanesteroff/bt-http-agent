@@ -1,4 +1,8 @@
 const axios = require('axios')
+const { Agent } = require('https')
+
+
+const httpsAgent = new Agent({ rejectUnauthorized: false })
 
 
 const NODE = 'http://localhost:8080'
@@ -13,18 +17,20 @@ const SERVERS = [
 
 const networking = '/networking'
 const crypto = '/crypto'
+const jwt = '/jwt'
 const fs = '/fs'
 
 
 const ENDPOINTS = [
   { id: 'net', value: networking },
   { id: 'cr', value: crypto },
+  { id: 'jwt', value: jwt },
   { id: 'fs', value: fs },
 ]
 
 
 const makeReq = async (url) => {
-  const res = await axios.post(url, { validateStatus: () => true })
+  const res = await axios.post(url, { validateStatus: () => true, httpsAgent })
 
   return res.data
 }
@@ -47,7 +53,7 @@ const run = async () => {
 
         console.log(url)
 
-        for (var i = 1; i <= 250; i++) {
+        for (var i = 1; i <= 100; i++) {
           output.push(makeReq(url))
         }
 
@@ -59,7 +65,7 @@ const run = async () => {
 
     const end = new Date().getTime()
 
-    console.log(`Stats: Total time - ${end - start} ms, CPU time - ${res.cpu / 1000} ms, *Memory - ${res.mem} Mb`)
+    console.log(`Rezultāts: Kopējais pieprasījumu apstrādes laiks  - ${end - start} ms, kopējais centrāla procesora laiks - ${res.cpu / 1000} ms`)
   }
 }
 
